@@ -1,0 +1,75 @@
+{
+  "name": "auditbench-vscode",
+  "displayName": "audit/bench",
+  "description": "AI code review, security, logic, performance, architecture, and test-coverage findings — right in the editor.",
+  "version": "0.1.0",
+  "publisher": "auditbench",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noumanas/audit-bench-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Linters", "Other"],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "auditbench.auditCurrentFile",
+        "title": "audit/bench: Audit Current File",
+        "icon": "$(search-fuzzy)"
+      },
+      {
+        "command": "auditbench.setApiKey",
+        "title": "audit/bench: Set API Key"
+      },
+      {
+        "command": "auditbench.clearFindings",
+        "title": "audit/bench: Clear Findings for This File"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "auditbench.auditCurrentFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "audit/bench",
+      "properties": {
+        "auditbench.apiUrl": {
+          "type": "string",
+          "default": "https://audit-bench-backend-git-242355763105.europe-west1.run.app",
+          "description": "audit/bench API base URL. Point this at http://localhost:4000 for local backend testing."
+        },
+        "auditbench.provider": {
+          "type": "string",
+          "enum": ["", "anthropic", "openai", "gemini"],
+          "default": "",
+          "description": "LLM provider to use. Leave blank to use your account's default."
+        },
+        "auditbench.auditOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically audit a file every time you save it. Off by default — audits consume plan quota, so this is opt-in."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.9.3"
+  }
+}
