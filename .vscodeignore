@@ -2,4 +2,5 @@ src/**
 .vscode/**
 tsconfig.json
 **/*.map
+**/*.test.js
 .gitignore

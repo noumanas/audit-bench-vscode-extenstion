@@ -12,7 +12,10 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Linters", "Other"],
+  "categories": [
+    "Linters",
+    "Other"
+  ],
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
@@ -23,12 +26,25 @@
         "icon": "$(search-fuzzy)"
       },
       {
+        "command": "auditbench.fixAllWithAi",
+        "title": "audit/bench: Fix All Issues with AI",
+        "icon": "$(wand)"
+      },
+      {
         "command": "auditbench.setApiKey",
         "title": "audit/bench: Set API Key"
       },
       {
         "command": "auditbench.clearFindings",
         "title": "audit/bench: Clear Findings for This File"
+      },
+      {
+        "command": "auditbench.showAccount",
+        "title": "audit/bench: Show Account & Usage"
+      },
+      {
+        "command": "auditbench.showLogs",
+        "title": "audit/bench: Show Logs"
       }
     ],
     "menus": {
@@ -36,6 +52,18 @@
         {
           "command": "auditbench.auditCurrentFile",
           "group": "navigation"
+        },
+        {
+          "command": "auditbench.fixAllWithAi",
+          "group": "navigation",
+          "when": "auditbench.hasFindings"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "auditbench.fixAllWithAi",
+          "group": "navigation",
+          "when": "auditbench.hasFindings"
         }
       ]
     },
@@ -49,7 +77,12 @@
         },
         "auditbench.provider": {
           "type": "string",
-          "enum": ["", "anthropic", "openai", "gemini"],
+          "enum": [
+            "",
+            "anthropic",
+            "openai",
+            "gemini"
+          ],
           "default": "",
           "description": "LLM provider to use. Leave blank to use your account's default."
         },
@@ -57,6 +90,11 @@
           "type": "boolean",
           "default": false,
           "description": "Automatically audit a file every time you save it. Off by default — audits consume plan quota, so this is opt-in."
+        },
+        "auditbench.warnAboveChars": {
+          "type": "number",
+          "default": 20000,
+          "description": "Ask for confirmation before auditing a file larger than this many characters — its full contents are sent to your configured LLM provider. Set to 0 to disable the prompt."
         }
       }
     }
@@ -64,12 +102,18 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node --test dist/*.test.js",
     "package": "vsce package"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "@types/node": "^20.12.0",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.2.1",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.0"
   }
 }
