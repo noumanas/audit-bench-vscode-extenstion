@@ -20,6 +20,8 @@ The backend's AI-fix endpoints are scoped to an existing repo scan (a `ScanJob`)
 
 If the file changes while the fix is being generated (a real possibility — the round trip can take a while), applying the fix would silently discard those newer edits, so it asks for confirmation first instead.
 
+**On "some findings remain" after a fix:** the recheck step re-audits the whole file from scratch — it's a fresh, independent review, not a check of "were these specific N findings resolved." That means a non-zero finding count afterward doesn't necessarily mean the fix failed on what it was asked to fix; it can just as easily mean the fresh pass noticed something different. The summary message says which one actually happened — "N of the original findings are still there" (the fix genuinely didn't resolve them) versus "a fresh full re-check surfaced M new ones" (the original findings look resolved; these are separate) — using a best-effort title match, since there's no stable ID linking a finding across two independent audit calls.
+
 ### A note on what actually gets sent
 
 Auditing a file sends its **full contents** to your configured LLM provider — that's the whole point, but it's easy to forget when you're auditing whatever file happens to be open. Three separate checks run before anything is sent:
@@ -71,10 +73,11 @@ code --install-extension auditbench-vscode-0.1.0.vsix
 npm test
 ```
 
-Covers two modules with plain `node:test`, no VS Code mocking needed, since both deliberately have no `vscode` import:
+Covers three modules with plain `node:test`, no VS Code mocking needed, since all three deliberately have no `vscode` import:
 
 - **`errorMapping.ts`** — cancellation detection, 401/403/unexpected-error handling, and log truncation.
 - **`secretsHeuristic.ts`** — real key-shaped content is flagged (AWS keys, PEM headers, Slack/Stripe/GitHub tokens, hardcoded key assignments), legitimate env-var references aren't, and — the case that matters most here — ordinary code that merely *mentions* "password" or "secret" is explicitly asserted **not** to trigger a warning, since that's exactly the false-positive failure mode a naive word-match would have hit.
+- **`findingComparison.ts`** — the title-match heuristic "Fix All" uses to tell "this specific finding is still here" apart from "the post-fix recheck surfaced something different" (see **How "Fix All" actually works** above).
 
 These are the parts of the extension's control flow most likely to regress silently or quietly get weaker (a mis-classified error can leak upstream detail into a popup; a loosened secrets pattern either stops catching real keys or starts nagging on everything until people click through it without reading). The command registrations, status bar rendering, and webview panel are UI glue over this logic and are exercised manually (see **Testing it live** below) rather than through automated tests — wiring up `@vscode/test-electron` for real extension-host integration tests would be the next step if this needs more than manual verification.
 

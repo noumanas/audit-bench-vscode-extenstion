@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip';
 import * as vscode from 'vscode';
 import { aiFixAll, getScan, recheckFix, startSingleFileScan } from './api';
+import { compareFindings } from './findingComparison';
 import { Finding, ScanJobResult } from './types';
 
 const POLL_INTERVAL_MS = 2000;
@@ -15,6 +16,9 @@ export type FixAllOutcome =
       originalFindingsCount: number;
       after: { verdict: 'pass' | 'needs_work' | 'do_not_ship'; findings: Finding[] };
       resolved: boolean;
+      /** How many of the findings shown after the fix look like the same ones from before, vs new ones the fresh recheck surfaced — see findingComparison.ts. */
+      stillPresentCount: number;
+      newlySurfacedCount: number;
     };
 
 function sleep(ms: number, signal: AbortSignal): Promise<void> {
@@ -93,6 +97,7 @@ export async function runFixAll(
 
   onProgress('Re-checking the fix…');
   const recheck = await recheckFix(context, finished.id, relativePath, fix.fixedCode, signal);
+  const comparison = compareFindings(findings, recheck.after.findings);
 
   return {
     kind: 'fixed',
@@ -101,5 +106,7 @@ export async function runFixAll(
     originalFindingsCount: findings.length,
     after: recheck.after,
     resolved: recheck.resolved,
+    stillPresentCount: comparison.stillPresentCount,
+    newlySurfacedCount: comparison.newlySurfacedCount,
   };
 }

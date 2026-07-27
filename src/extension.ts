@@ -294,8 +294,25 @@ export function activate(context: vscode.ExtensionContext) {
       updateHasFindingsContext();
       setStatus(document, { kind: 'result', verdict: outcome.after.verdict, tooltip: outcome.explanation });
 
-      const remaining = outcome.after.findings.length;
-      const summary = `Fixed ${outcome.originalFindingsCount} finding(s) in ${filename}${outcome.resolved ? ' — all clear now.' : ` — ${remaining} remain, review before committing.`} ${outcome.explanation}`;
+      // recheckFix re-audits the whole file from scratch — it doesn't verify
+      // "were these N specific findings resolved," so a non-zero count here
+      // doesn't necessarily mean the fix failed. stillPresentCount (a
+      // title-match heuristic, see findingComparison.ts) distinguishes the
+      // same issues persisting from a fresh pass surfacing something else,
+      // so the message says which one actually happened instead of a vague
+      // "issues remain" that reads as a failure either way.
+      const { stillPresentCount, newlySurfacedCount } = outcome;
+      let tail: string;
+      if (outcome.resolved) {
+        tail = 'a fresh re-check found nothing left.';
+      } else if (stillPresentCount > 0 && newlySurfacedCount > 0) {
+        tail = `${stillPresentCount} of the original finding(s) are still there, and a fresh full re-check also surfaced ${newlySurfacedCount} more — review before committing.`;
+      } else if (stillPresentCount > 0) {
+        tail = `${stillPresentCount} of the original finding(s) are still there — the fix didn't fully resolve them, review before committing.`;
+      } else {
+        tail = `the original finding(s) look resolved, but a fresh full re-check surfaced ${newlySurfacedCount} new one(s) — review before committing.`;
+      }
+      const summary = `Fixed ${outcome.originalFindingsCount} finding(s) in ${filename} — ${tail} ${outcome.explanation}`;
       if (outcome.resolved) {
         vscode.window.showInformationMessage(`audit/bench: ${summary}`);
       } else {
@@ -373,7 +390,7 @@ export function activate(context: vscode.ExtensionContext) {
           const contents = atLine
             .map((d) => findingByDiagnostic.get(d))
             .filter((f): f is NonNullable<typeof f> => Boolean(f))
-            .map(findingToHoverMarkdown);
+            .map((f) => findingToHoverMarkdown(f, document.languageId));
           if (contents.length === 0) return undefined;
 
           return new vscode.Hover(contents);
