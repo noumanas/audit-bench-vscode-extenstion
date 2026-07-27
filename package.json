@@ -81,7 +81,14 @@
             "",
             "anthropic",
             "openai",
-            "gemini"
+            "gemini",
+            "deepseek",
+            "glm",
+            "qwen",
+            "kimi",
+            "xai",
+            "mistral",
+            "minimax"
           ],
           "default": "",
           "description": "LLM provider to use. Leave blank to use your account's default."
