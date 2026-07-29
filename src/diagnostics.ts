@@ -8,7 +8,7 @@ const SEVERITY_MAP: Record<Severity, vscode.DiagnosticSeverity> = {
   low: vscode.DiagnosticSeverity.Information,
 };
 
-export const DIAGNOSTIC_SOURCE = 'audit/bench';
+export const DIAGNOSTIC_SOURCE = 'Audit Bench Ai';
 
 /** Stashed alongside each Diagnostic so the hover provider can recover the full finding without re-parsing the message. */
 export const findingByDiagnostic = new WeakMap<vscode.Diagnostic, Finding>();

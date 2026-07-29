@@ -29,7 +29,7 @@ export function mapAuditError(err: unknown, aborted: boolean): AuditErrorOutcome
   const detail = err instanceof Error ? (err.stack ?? err.message) : String(err);
   return {
     kind: 'unexpected',
-    message: 'audit/bench: audit failed unexpectedly — see the "audit/bench" output channel for details.',
+    message: 'Audit Bench Ai: audit failed unexpectedly — see the "Audit Bench Ai" output channel for details.',
     logDetail: truncateForLog(detail),
   };
 }

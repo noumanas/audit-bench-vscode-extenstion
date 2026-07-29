@@ -1,6 +1,6 @@
 {
   "name": "auditbench-vscode",
-  "displayName": "audit/bench",
+  "displayName": "Audit Bench Ai",
   "description": "AI code review, security, logic, performance, architecture, and test-coverage findings — right in the editor.",
   "version": "0.1.0",
   "publisher": "auditbench",
@@ -22,29 +22,29 @@
     "commands": [
       {
         "command": "auditbench.auditCurrentFile",
-        "title": "audit/bench: Audit Current File",
+        "title": "Audit Bench Ai: Audit Current File",
         "icon": "$(search-fuzzy)"
       },
       {
         "command": "auditbench.fixAllWithAi",
-        "title": "audit/bench: Fix All Issues with AI",
+        "title": "Audit Bench Ai: Fix All Issues with AI",
         "icon": "$(wand)"
       },
       {
         "command": "auditbench.setApiKey",
-        "title": "audit/bench: Set API Key"
+        "title": "Audit Bench Ai: Set API Key"
       },
       {
         "command": "auditbench.clearFindings",
-        "title": "audit/bench: Clear Findings for This File"
+        "title": "Audit Bench Ai: Clear Findings for This File"
       },
       {
         "command": "auditbench.showAccount",
-        "title": "audit/bench: Show Account & Usage"
+        "title": "Audit Bench Ai: Show Account & Usage"
       },
       {
         "command": "auditbench.showLogs",
-        "title": "audit/bench: Show Logs"
+        "title": "Audit Bench Ai: Show Logs"
       }
     ],
     "menus": {
@@ -68,12 +68,12 @@
       ]
     },
     "configuration": {
-      "title": "audit/bench",
+      "title": "Audit Bench Ai",
       "properties": {
         "auditbench.apiUrl": {
           "type": "string",
           "default": "https://audit-bench-backend-git-242355763105.europe-west1.run.app",
-          "description": "audit/bench API base URL. Point this at http://localhost:4000 for local backend testing."
+          "description": "Audit Bench Ai API base URL. Point this at http://localhost:4000 for local backend testing."
         },
         "auditbench.provider": {
           "type": "string",

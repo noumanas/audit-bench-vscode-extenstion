@@ -49,13 +49,13 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     if (status.kind === 'auditing') {
-      statusBar.text = '$(sync~spin) audit/bench';
+      statusBar.text = '$(sync~spin) Audit Bench Ai';
       statusBar.tooltip = `Auditing ${vscode.workspace.asRelativePath(doc.uri, false)}…`;
     } else if (status.kind === 'error') {
-      statusBar.text = '$(error) audit/bench';
-      statusBar.tooltip = 'Audit failed — see the "audit/bench" output channel for details.';
+      statusBar.text = '$(error) Audit Bench Ai';
+      statusBar.tooltip = 'Audit failed — see the "Audit Bench Ai" output channel for details.';
     } else {
-      statusBar.text = `$(shield) audit/bench: ${VERDICT_ICON[status.verdict] ?? status.verdict}`;
+      statusBar.text = `$(shield) Audit Bench Ai: ${VERDICT_ICON[status.verdict] ?? status.verdict}`;
       statusBar.tooltip = status.tooltip;
     }
     statusBar.show();
@@ -124,7 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
   async function confirmSendToApi(document: vscode.TextDocument, code: string): Promise<boolean> {
     if (!context.globalState.get<boolean>(HAS_SHOWN_SEND_NOTICE_KEY, false)) {
       const choice = await vscode.window.showInformationMessage(
-        'audit/bench sends the full contents of the file you audit to your configured LLM provider for review. Avoid auditing files containing secrets, credentials, or other data you don\'t want leaving your machine.',
+        'Audit Bench Ai sends the full contents of the file you audit to your configured LLM provider for review. Avoid auditing files containing secrets, credentials, or other data you don\'t want leaving your machine.',
         { modal: true },
         'Continue',
       );
@@ -172,14 +172,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     if (outcome.kind === 'auth-required') {
       const action = await vscode.window.showErrorMessage(
-        'audit/bench: not authenticated. Set an API key to run audits.',
+        'Audit Bench Ai: not authenticated. Set an API key to run audits.',
         'Set API Key',
       );
       if (action === 'Set API Key') void vscode.commands.executeCommand('auditbench.setApiKey');
       return;
     }
     if (outcome.kind === 'forbidden') {
-      vscode.window.showErrorMessage(`audit/bench: ${outcome.message}`);
+      vscode.window.showErrorMessage(`Audit Bench Ai: ${outcome.message}`);
       return;
     }
     outputChannel.appendLine(`Unexpected error for ${filename}: ${outcome.logDetail}`);
@@ -202,7 +202,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
       const result = await vscode.window.withProgress(
-        { location: vscode.ProgressLocation.Notification, title: `audit/bench: auditing ${filename}` },
+        { location: vscode.ProgressLocation.Notification, title: `Audit Bench Ai: auditing ${filename}` },
         () => auditFile(context, filename, code, controller.signal),
       );
 
@@ -219,11 +219,11 @@ export function activate(context: vscode.ExtensionContext) {
       setStatus(document, { kind: 'result', verdict: result.verdict, tooltip: `${result.summary}${costNote}` });
 
       if (result.verdict === 'do_not_ship') {
-        vscode.window.showErrorMessage(`audit/bench: do not ship — ${result.findings.length} finding(s) in ${filename}`);
+        vscode.window.showErrorMessage(`Audit Bench Ai: do not ship — ${result.findings.length} finding(s) in ${filename}`);
       } else if (result.verdict === 'needs_work') {
-        vscode.window.showWarningMessage(`audit/bench: needs work — ${result.findings.length} finding(s) in ${filename}`);
+        vscode.window.showWarningMessage(`Audit Bench Ai: needs work — ${result.findings.length} finding(s) in ${filename}`);
       } else {
-        vscode.window.showInformationMessage(`audit/bench: pass — no blocking findings in ${filename}`);
+        vscode.window.showInformationMessage(`Audit Bench Ai: pass — no blocking findings in ${filename}`);
       }
 
       // This run may have just spent quota — keep the glance and the open panel (if any) in sync.
@@ -253,7 +253,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
       const outcome = await vscode.window.withProgress(
-        { location: vscode.ProgressLocation.Notification, title: `audit/bench: fixing ${filename}` },
+        { location: vscode.ProgressLocation.Notification, title: `Audit Bench Ai: fixing ${filename}` },
         (progress) => runFixAll(context, filename, code, controller.signal, (message) => progress.report({ message })),
       );
 
@@ -261,7 +261,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (outcome.kind === 'no-findings') {
         setStatus(document, { kind: 'result', verdict: 'pass', tooltip: 'No issues found — nothing to fix.' });
-        vscode.window.showInformationMessage(`audit/bench: no issues found in ${filename} — nothing to fix.`);
+        vscode.window.showInformationMessage(`Audit Bench Ai: no issues found in ${filename} — nothing to fix.`);
         return;
       }
 
@@ -314,9 +314,9 @@ export function activate(context: vscode.ExtensionContext) {
       }
       const summary = `Fixed ${outcome.originalFindingsCount} finding(s) in ${filename} — ${tail} ${outcome.explanation}`;
       if (outcome.resolved) {
-        vscode.window.showInformationMessage(`audit/bench: ${summary}`);
+        vscode.window.showInformationMessage(`Audit Bench Ai: ${summary}`);
       } else {
-        vscode.window.showWarningMessage(`audit/bench: ${summary}`);
+        vscode.window.showWarningMessage(`Audit Bench Ai: ${summary}`);
       }
 
       // This spent quota for the scan, the fix, and the recheck — keep usage in sync.
@@ -334,7 +334,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('auditbench.auditCurrentFile', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
-        vscode.window.showWarningMessage('audit/bench: open a file to audit first.');
+        vscode.window.showWarningMessage('Audit Bench Ai: open a file to audit first.');
         return;
       }
       await runAudit(editor.document);
@@ -343,7 +343,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('auditbench.fixAllWithAi', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
-        vscode.window.showWarningMessage('audit/bench: open a file to fix first.');
+        vscode.window.showWarningMessage('Audit Bench Ai: open a file to fix first.');
         return;
       }
       await runFixAllCommand(editor.document);
@@ -351,15 +351,15 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('auditbench.setApiKey', async () => {
       const key = await vscode.window.showInputBox({
-        title: 'audit/bench API key',
+        title: 'Audit Bench Ai API key',
         prompt: 'Paste your API key (Dashboard → Integrations → CLI / CI-CD API key)',
         password: true,
         ignoreFocusOut: true,
-        validateInput: (value) => (value.startsWith('abk_') ? undefined : 'audit/bench API keys start with "abk_"'),
+        validateInput: (value) => (value.startsWith('abk_') ? undefined : 'Audit Bench Ai API keys start with "abk_"'),
       });
       if (!key) return;
       await setApiKey(context, key);
-      vscode.window.showInformationMessage('audit/bench: API key saved.');
+      vscode.window.showInformationMessage('Audit Bench Ai: API key saved.');
       void refreshAccountStatusBar();
     }),
 
@@ -407,8 +407,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   void getApiKey(context).then((key) => {
     if (!key) {
-      statusBar.text = '$(shield) audit/bench: no API key';
-      statusBar.tooltip = 'Click to set your API key, or run "audit/bench: Set API Key"';
+      statusBar.text = '$(shield) Audit Bench Ai: no API key';
+      statusBar.tooltip = 'Click to set your API key, or run "Audit Bench Ai: Set API Key"';
       statusBar.command = 'auditbench.setApiKey';
       statusBar.show();
       return;

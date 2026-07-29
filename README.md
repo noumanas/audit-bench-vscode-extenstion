@@ -1,16 +1,16 @@
-# audit/bench for VS Code
+# Audit Bench Ai for VS Code
 
 AI code review — security, logic, performance, architecture, and test-coverage findings — as inline diagnostics in the editor, backed by the same engine as the web app and CLI.
 
 ## What it does
 
-- **`audit/bench: Audit Current File`** — sends the active file to your audit/bench account and shows findings as squiggly underlines (red for critical/high, yellow for medium, blue for low).
+- **`Audit Bench Ai: Audit Current File`** — sends the active file to your Audit Bench Ai account and shows findings as squiggly underlines (red for critical/high, yellow for medium, blue for low).
 - Hover any flagged line for the full finding: description, root cause, suggested fix, and an example patch where available.
 - A status bar item shows the last verdict (`pass` / `needs work` / `do not ship`) and how many tokens it cost — nothing if the finding was free (cached or resolved by local checks alone).
 - Optional **audit on save** (off by default — audits consume plan quota, so this is opt-in).
-- **`audit/bench: Show Account & Usage`** — a panel showing your name/email, plan, and daily/monthly AI-audit quota with reset times. A second status bar item shows a quick glance (e.g. "Pro · 3/50 today") and opens the full panel on click; it refreshes automatically after every audit you run, so quota shown here never goes stale.
-- **`audit/bench: Show Logs`** — opens the "audit/bench" output channel. Errors shown in popups are always a short, safe message; the full detail (raw server error bodies, stack traces — capped in length) goes here, never into a message box, since either can contain more than you'd want in something that copy/pastes or screenshots easily.
-- **`audit/bench: Fix All Issues with AI`** — a toolbar button (and context-menu entry) that appears once a file has findings. Fixes every finding in one AI pass and applies the result directly to the editor, then re-checks the fixed code and updates the diagnostics to match. See **How "Fix All" actually works** below — it's doing more than it looks like.
+- **`Audit Bench Ai: Show Account & Usage`** — a panel showing your name/email, plan, and daily/monthly AI-audit quota with reset times. A second status bar item shows a quick glance (e.g. "Pro · 3/50 today") and opens the full panel on click; it refreshes automatically after every audit you run, so quota shown here never goes stale.
+- **`Audit Bench Ai: Show Logs`** — opens the "Audit Bench Ai" output channel. Errors shown in popups are always a short, safe message; the full detail (raw server error bodies, stack traces — capped in length) goes here, never into a message box, since either can contain more than you'd want in something that copy/pastes or screenshots easily.
+- **`Audit Bench Ai: Fix All Issues with AI`** — a toolbar button (and context-menu entry) that appears once a file has findings. Fixes every finding in one AI pass and applies the result directly to the editor, then re-checks the fixed code and updates the diagnostics to match. See **How "Fix All" actually works** below — it's doing more than it looks like.
 
 This talks to the same `POST /audit`, `GET /me`, `GET /me/usage`, and repo-scan/fix endpoints the CLI and web app use — no separate backend needed.
 
@@ -35,8 +35,8 @@ None of this is a substitute for judgment — the content check is a heuristic, 
 ## Setup
 
 1. Install the extension (see **Building & installing locally** below until this is published to the Marketplace).
-2. Run **audit/bench: Set API Key** from the Command Palette (`Cmd/Ctrl+Shift+P`). Get your key from the web app: Dashboard → Integrations → "CLI / CI-CD API key". It's stored in VS Code's encrypted secret storage, not in a plain settings file.
-3. Open a file and run **audit/bench: Audit Current File**.
+2. Run **Audit Bench Ai: Set API Key** from the Command Palette (`Cmd/Ctrl+Shift+P`). Get your key from the web app: Dashboard → Integrations → "CLI / CI-CD API key". It's stored in VS Code's encrypted secret storage, not in a plain settings file.
+3. Open a file and run **Audit Bench Ai: Audit Current File**.
 
 By default this points at the production API. To test against a local backend instead, set `auditbench.apiUrl` in your VS Code settings to `http://localhost:4000`.
 
@@ -45,7 +45,7 @@ By default this points at the production API. To test against a local backend in
 | Setting | Default | Description |
 |---|---|---|
 | `auditbench.apiUrl` | production URL | API base URL — override for local backend testing |
-| `auditbench.provider` | (account default) | Force a specific LLM provider: `anthropic`, `openai`, or `gemini` |
+| `auditbench.provider` | (account default) | Force a specific LLM provider: `anthropic`, `openai`, `gemini`, `deepseek`, `glm`, `qwen`, `kimi`, `xai`, `mistral`, or `minimax` |
 | `auditbench.auditOnSave` | `false` | Automatically audit a file every time you save it |
 | `auditbench.warnAboveChars` | `20000` | Ask for confirmation before auditing a file larger than this many characters. Set to `0` to disable. |
 
@@ -89,4 +89,4 @@ Fastest loop while making changes: open this folder in VS Code and press **F5** 
 
 - **Fixing a single finding at a time** — only "Fix All" exists; picking one finding out of several to fix on its own would need its own smaller scan-and-fix round trip per finding, which isn't built yet. Hover still shows each finding's suggested fix and example patch as text if you'd rather apply just one by hand.
 - **Whole-repo scans from the editor** — `scan` requires zipping a directory and is already well served by the CLI (`auditbench scan .`) or the web app; re-implementing that inside the extension didn't seem worth it for a first pass. "Fix All"'s one-file zip upload is a narrower, purpose-specific use of the same endpoint, not a step toward general repo scanning from here.
-- **Auto-publish to the Marketplace** — packaging a `.vsix` is included above; actually publishing needs a Marketplace publisher account and a personal access token, which is a one-time setup step for whoever owns the audit/bench publisher identity, not something this extension can do on its own.
+- **Auto-publish to the Marketplace** — packaging a `.vsix` is included above; actually publishing needs a Marketplace publisher account and a personal access token, which is a one-time setup step for whoever owns the Audit Bench Ai publisher identity, not something this extension can do on its own.

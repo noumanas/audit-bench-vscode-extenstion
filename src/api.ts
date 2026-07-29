@@ -18,7 +18,7 @@ export * from './types';
  * error pages, or other backend-internal detail) are logged here, never
  * surfaced directly in a user-facing popup — see parseErrorMessage below.
  */
-export const outputChannel = vscode.window.createOutputChannel('audit/bench');
+export const outputChannel = vscode.window.createOutputChannel('Audit Bench Ai');
 
 const SECRET_KEY = 'auditbench.apiKey';
 
@@ -37,7 +37,7 @@ function apiUrl(): string {
 async function apiFetch<T>(context: vscode.ExtensionContext, path: string, init?: RequestInit): Promise<T> {
   const apiKey = await getApiKey(context);
   if (!apiKey) {
-    throw new ApiError(401, 'No API key set — run "audit/bench: Set API Key" first.');
+    throw new ApiError(401, 'No API key set — run "Audit Bench Ai: Set API Key" first.');
   }
 
   // A FormData body (multipart file upload) needs fetch to set its own
@@ -82,7 +82,7 @@ async function safeErrorMessage(res: Response): Promise<string> {
   } catch {
     // Not JSON — an HTML error page or similar. Don't show it verbatim.
   }
-  return `Server error (${res.status}) — see the "audit/bench" output channel for details.`;
+  return `Server error (${res.status}) — see the "Audit Bench Ai" output channel for details.`;
 }
 
 // Matches the backend's own @MaxLength(200000) on CreateAuditDto.code — refusing

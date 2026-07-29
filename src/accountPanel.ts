@@ -144,7 +144,7 @@ export function showAccountPanel(context: vscode.ExtensionContext): void {
     return;
   }
 
-  panel = vscode.window.createWebviewPanel('auditbenchAccount', 'audit/bench: Account', vscode.ViewColumn.Beside, {
+  panel = vscode.window.createWebviewPanel('auditbenchAccount', 'Audit Bench Ai: Account', vscode.ViewColumn.Beside, {
     enableScripts: true,
     retainContextWhenHidden: true,
   });
@@ -174,7 +174,7 @@ async function refresh(context: vscode.ExtensionContext): Promise<void> {
   } catch (err) {
     const message =
       err instanceof ApiError && err.status === 401
-        ? 'Not authenticated — run "audit/bench: Set API Key" first.'
+        ? 'Not authenticated — run "Audit Bench Ai: Set API Key" first.'
         : `Failed to load account: ${(err as Error).message}`;
     panel.webview.html = shell(`<div class="error">${escapeHtml(message)}</div><button id="refresh">Retry</button>`);
   }
