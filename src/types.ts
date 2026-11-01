@@ -3,7 +3,7 @@
 // errorMapping.ts (and its tests) can depend on this without dragging in
 // the vscode module.
 
-export type Severity = 'critical' | 'high' | 'medium' | 'low';
+export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
 export interface Finding {
   severity: Severity;
