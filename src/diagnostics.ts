@@ -6,6 +6,8 @@ const SEVERITY_MAP: Record<Severity, vscode.DiagnosticSeverity> = {
   high: vscode.DiagnosticSeverity.Error,
   medium: vscode.DiagnosticSeverity.Warning,
   low: vscode.DiagnosticSeverity.Information,
+  // Optional suggestions: a faint hint, never counted in the Problems panel.
+  info: vscode.DiagnosticSeverity.Hint,
 };
 
 export const DIAGNOSTIC_SOURCE = 'Audit Bench Ai';
